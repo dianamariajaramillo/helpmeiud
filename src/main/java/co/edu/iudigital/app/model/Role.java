@@ -10,9 +10,13 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
+
+import lombok.Data;
 
 @Entity
 @Table(name = "roles")
+@Data
 public class Role implements Serializable{
 
 	/**
@@ -24,6 +28,7 @@ public class Role implements Serializable{
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
+	@NotBlank
 	@Column(nullable = false, length = 45)
 	private String nombre;
 	

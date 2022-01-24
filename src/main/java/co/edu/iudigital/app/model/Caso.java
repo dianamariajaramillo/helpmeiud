@@ -13,6 +13,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
 
+//ORM -> Hibernate
 @Entity
 @Table(name = "casos")
 public class Caso implements Serializable{

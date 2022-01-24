@@ -10,6 +10,9 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.NotEmpty;
+
+import com.sun.istack.NotNull;
 
 
 @Entity
@@ -25,6 +28,8 @@ public class Delito implements Serializable{
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
+	@NotEmpty
+	@NotNull
 	@Column(nullable = false, length = 45)
 	private String nombre;
 	
