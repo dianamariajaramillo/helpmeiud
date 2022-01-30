@@ -1,10 +1,10 @@
 package co.edu.iudigital.app.dto;
 
-import lombok.Builder;
+//import lombok.Builder;
 // import lombok.Data; --Genera error
 
 // @Data --Construcción manual de getters and setters, con @Data no funcionó
-@Builder
+// @Builder
 public class DelitoDto {
   	private Long id;
 	private String nombre;
