@@ -46,9 +46,9 @@ public class DelitoServiceImpl implements IDelitoService{
 	}
 
 	@Override
-	public Delito findById(Long id) {
-		// TODO Auto-generated method stub
-		return null;
+	@Transactional(readOnly = true)
+	public Delito findById(Long id) {	
+		return delitoRepository.findById(id).orElse(null);
 	}
 
 	@Override
