@@ -2,6 +2,7 @@ package co.edu.iudigital.app.service.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -53,14 +54,17 @@ public class DelitoServiceImpl implements IDelitoService{
 
 	@Override
 	public Delito save(Delito delito) {
-		// TODO Auto-generated method stub
-		return null;
+		return delitoRepository.save(delito);
 	}
 
+	
 	@Override
+	@Transactional
 	public void delete(Long id) {
-		// TODO Auto-generated method stub
-		
+		Optional<Delito> delito = delitoRepository.findById(id);
+		if(delito.isPresent()) {
+			delitoRepository.deleteById(id);
+		}
 	}
 	
 }
