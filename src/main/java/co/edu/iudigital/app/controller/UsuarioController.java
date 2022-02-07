@@ -5,13 +5,17 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestClientException;
 
 import co.edu.iudigital.app.dto.UsuarioDto;
 import co.edu.iudigital.app.exception.RestException;
 import co.edu.iudigital.app.model.Usuario;
+import co.edu.iudigital.app.service.iface.IEmailService;
 import co.edu.iudigital.app.service.iface.IUsuarioService;
 import co.edu.iudigital.app.util.Helper;
 import io.swagger.annotations.Api;
@@ -30,8 +34,8 @@ public class UsuarioController {
 	@Autowired
 	private IUsuarioService usuarioService;
 
-	//@Autowired
-	//private IEmailService emailService;
+	@Autowired
+	private IEmailService emailService;
 	
 	@ApiOperation(value = "Obtiene todos los usuarios",
 			produces = "application/json",
@@ -52,4 +56,10 @@ public class UsuarioController {
 		UsuarioDto usuarioDto = Helper.getMapValuesClient(usuario);
 		return ResponseEntity.ok().body(usuarioDto);
 	}
+	
+	@PostMapping("/signup")
+	public ResponseEntity<Usuario> create(@RequestBody Usuario usuario) throws RestClientException{
+		
+	}
+	
 }
