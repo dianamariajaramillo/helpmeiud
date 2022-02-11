@@ -1,7 +1,15 @@
 package co.edu.iudigital.app.controller;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.UUID;
 
 import javax.validation.Valid;
 
@@ -13,7 +21,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import co.edu.iudigital.app.dto.UsuarioDto;
 import co.edu.iudigital.app.exception.RestException;
@@ -84,4 +94,39 @@ public class UsuarioController {
 		return ResponseEntity.status(HttpStatus.CREATED).body(usuarioDto);
 	}
 	
+	@PostMapping("/upload/{email}")//TODO: cambiar a spring security
+	public ResponseEntity<?> upload(
+			@RequestParam("image") MultipartFile image,
+			@PathVariable String email) throws RestException{
+		Map<String, Object> response = new HashMap<>();
+		Usuario usuario = usuarioService.listByUsername(email);
+		if(!image.isEmpty()) {
+			String nombreImage = UUID.randomUUID().toString()
+					.concat("_")
+					.concat(image.getOriginalFilename().replace(" ", ""));
+			Path path = Paths.get("uploads").resolve(nombreImage).toAbsolutePath();
+			// uploads/asdasdads_mifoto.jpg
+			try {
+				Files.copy(image.getInputStream(), path);
+			} catch (IOException e) {
+				response.put("Error IO", e.getMessage().concat(e.getCause().getMessage()));
+				return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+			}
+			String imageBD = usuario.getImage();
+			// borrar imagen vieja
+			if(Objects.nonNull(imageBD) && imageBD.length() > 0
+					&& !imageBD.startsWith("http")) {
+				Path pathAntes = Paths.get("uploads").resolve(imageBD).toAbsolutePath();
+				// uploads/iidsadasda_1.jpg
+				File imageFileAntes = pathAntes.toFile();
+				if(imageFileAntes.exists() && imageFileAntes.canRead()) {
+					imageFileAntes.delete();
+				}
+			}
+			usuario.setImage(nombreImage);
+			usuarioService.updateUser(usuario);
+			response.put("usuario", usuario);
+		}
+		return new ResponseEntity<Map<String, Object>>(response, HttpStatus.CREATED);
+	}
 }

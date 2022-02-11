@@ -28,6 +28,7 @@ public class UsuarioServiceImpl implements IUsuarioService{
 	@Autowired
 	private IUsuarioRepository usuarioRepository;
 	
+	@Transactional(readOnly = true)
 	@Override
 	public List<UsuarioDto> listUsers() throws RestException {
 		List<Usuario> usuariosDB = usuarioRepository.findAll();
@@ -91,16 +92,23 @@ public class UsuarioServiceImpl implements IUsuarioService{
 		return usuarioRepository.save(usuario);
 	}
 
+	@Transactional(readOnly = true)
 	@Override
 	public Usuario listByUsername(String username) {
-		// TODO Auto-generated method stub
-		return null;
+		return usuarioRepository.findByUsername(username);
 	}
 
+	@Transactional
 	@Override
 	public Usuario updateUser(Usuario usuario) throws RestException {
-		// TODO Auto-generated method stub
-		return null;
+		if(Objects.isNull(usuario)) {
+			throw new BadRequestException(ErrorDto.getErrorDto(
+					HttpStatus.BAD_REQUEST.getReasonPhrase(), 
+					"Mala petición", //TODO: CREAR CONSTANTE EN CONSUTIL
+					HttpStatus.BAD_REQUEST.value())
+				);
+		}
+		return usuarioRepository.save(usuario);
 	}
 
 	
