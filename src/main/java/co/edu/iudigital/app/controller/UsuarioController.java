@@ -18,6 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,6 +27,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import co.edu.iudigital.app.dto.UsuarioDto;
+import co.edu.iudigital.app.exception.ErrorDto;
+import co.edu.iudigital.app.exception.NotFoundException;
 import co.edu.iudigital.app.exception.RestException;
 import co.edu.iudigital.app.model.Usuario;
 import co.edu.iudigital.app.service.iface.IEmailService;
@@ -128,5 +131,30 @@ public class UsuarioController {
 			response.put("usuario", usuario);
 		}
 		return new ResponseEntity<Map<String, Object>>(response, HttpStatus.CREATED);
+	}
+	
+	@ApiOperation(value = "Actualiza un usuario",
+			response = Usuario.class,
+			produces = "application/json",
+			httpMethod = "PUT")
+	@PutMapping("/usuario")
+	public ResponseEntity<Usuario> update(@PathVariable String username, 
+			@RequestBody Usuario usuario) throws RestException{
+		Usuario usuarioBD = usuarioService.listByUsername(username);
+		if(Objects.isNull(usuarioBD)) {
+			throw new NotFoundException(ErrorDto.getErrorDto(
+					HttpStatus.NOT_FOUND.getReasonPhrase(), 
+					ConstUtil.MESSAGE_NOT_FOUND, 
+					HttpStatus.NOT_FOUND.value()
+					)
+				);
+		}
+		usuarioBD.setNombre(usuario.getNombre());
+		usuarioBD.setApellido(usuario.getApellido());
+		usuarioBD.setFechaNacimiento(usuario.getFechaNacimiento());
+		usuarioBD.setPassword(usuario.getPassword()); // TODO: implementar con Spring security
+		return ResponseEntity.status(HttpStatus.CREATED).body(
+				usuarioService.updateUser(usuarioBD)
+				);
 	}
 }
